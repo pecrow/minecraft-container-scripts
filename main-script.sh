@@ -13,19 +13,23 @@ mkdir /home/Minecraft/MinecraftServer_Backup 2>/dev/null
 ## This file is used to check if version should be updated. 
 touch /home/Minecraft/Last_Mine-version 2>/dev/null 
 
+echo "$(date) - Installing wget and unzip packages"
+apt update
+apt-get install wget unzip -y
+
 echo "$(date) - Preparing and exporting the URL for the Minecraft Bedrock Server files."
 URL=$(curl -k "https://www.minecraft.net/en-us/download/server/bedrock" -H "Accept-Encoding: gzip,deflate,sdch" -H "Accept-Language: en-US,en;q=0.8" -H "User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1985.143 Safari/537.36" -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8" -H "Referer: http://google.com"-H "Connection: keep-alive" -H "Cache-Control: max-age=0" --compressed >/home/Minecraft/tmp/bedrock 2>/dev/null; echo $(cat /home/Minecraft/tmp/bedrock | grep bin-linux | awk '{print $2}' |sed 's/href=//' | tr -d '"' ))
 
 echo "$(date) - Performing basic file cleanup, removing garbage files if they exist to save space."
-rm -fv /home/Minecraft/MinecraftServer_Bedrock/*.zip 
-rm -fv /home/Minecraft/MinecraftServer_Bedrock/bedrock_server_symbols.debug
+rm -fv /home/Minecraft/MinecraftServer_Bedrock/*.zip 2>/dev/null
+rm -fv /home/Minecraft/MinecraftServer_Bedrock/bedrock_server_symbols.debug 2>/dev/null
 
 echo "$(date) - Backing up server.properties, whitelist.json, and permissions.json if they exist." 
-cp -v /home/Minecraft/MinecraftServer_Bedrock/server.properties /home/Minecraft/MinecraftServer_Backup
-cp -v /home/Minecraft/MinecraftServer_Bedrock/whitelist.json /home/Minecraft/MinecraftServer_Backup
-cp -v /home/Minecraft/MinecraftServer_Bedrock/permissions.json /home/Minecraft/MinecraftServer_Backup
+cp -v /home/Minecraft/MinecraftServer_Bedrock/server.properties /home/Minecraft/MinecraftServer_Backup 2>/dev/null
+cp -v /home/Minecraft/MinecraftServer_Bedrock/whitelist.json /home/Minecraft/MinecraftServer_Backup 2>/dev/null
+cp -v /home/Minecraft/MinecraftServer_Bedrock/permissions.json /home/Minecraft/MinecraftServer_Backup 2>/dev/null
 echo "$(date) - Backing up existing worlds if they exist." 
-cp -vr /home/Minecraft/MinecraftServer_Bedrock/worlds/ /home/Minecraft/MinecraftServer_Backup/worlds/
+cp -vr /home/Minecraft/MinecraftServer_Bedrock/worlds/ /home/Minecraft/MinecraftServer_Backup/worlds/ 2>/dev/null
 echo "$(date) - Back up complete, files saved under /home/Minecraft/MinecraftServer_Backup ."
 
 echo "$(date) - Comparing the latest and currently installed Minecraft versions."
@@ -47,9 +51,9 @@ else
 	 unzip -p /home/Minecraft/MinecraftServer_Bedrock/bedrock-server*.zip bedrock_server > /home/Minecraft/MinecraftServer_Bedrock/bedrock_server 
    echo "$(date) - Update complete." 
    echo "$(date) - Restoring server.properties, whitelist.json, and permissions.json."
-   cp -v /home/Minecraft/MinecraftServer_Backup/server.properties /home/Minecraft/MinecraftServer_Bedrock
-   cp -v /home/Minecraft/MinecraftServer_Backup/whitelist.json /home/Minecraft/MinecraftServer_Bedrock
-   cp -v /home/Minecraft/MinecraftServer_Backup/permissions.json /home/Minecraft/MinecraftServer_Bedrock
+   cp -v /home/Minecraft/MinecraftServer_Backup/server.properties /home/Minecraft/MinecraftServer_Bedrock 2>/dev/null
+   cp -v /home/Minecraft/MinecraftServer_Backup/whitelist.json /home/Minecraft/MinecraftServer_Bedrock 2>/dev/null
+   cp -v /home/Minecraft/MinecraftServer_Backup/permissions.json /home/Minecraft/MinecraftServer_Bedrock 2>/dev/null
    echo "$(date) - Writing down latest updated version for future checks." 
 	 echo $URL > /home/Minecraft/Last_Mine-version
    echo "$(date) - Starting the Minecraft server! Almost there..."
