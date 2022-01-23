@@ -3,7 +3,7 @@
 echo "----------"
 echo "Script created by https://github.com/pecrow"
 echo "Complete beginners guide on AKS to be posted on https://ramirez.cr including the use of this script"
-echo "You may modify/use this as needed. For Free use only, not be sold in any way. If modifying/posting elsewhere, give credit."
+echo "You may modify and use this as needed. Only to be distrubuted at no cost. If modifying or posting elsewhere, please link to this github."
 echo "----------"
 
 echo "$(date) - Creating required directories and files."
@@ -14,7 +14,7 @@ mkdir /home/Minecraft/MinecraftServer_Backup 2>/dev/null
 touch /home/Minecraft/Last_Mine-version 2>/dev/null 
 
 echo "$(date) - Installing wget and unzip packages"
-export DEBIAN_FRONTEND=noninteractive
+export DEBIAN_FRONTEND=noninteractive >/dev/null
 apt-get -y update >/dev/null
 apt-get install -y --no-install-recommends --no-install-suggests --fix-missing bash-static wget unzip curl >/dev/null
 
@@ -62,5 +62,5 @@ else
 fi
 ## Due to the nature of this configuration, since I am calling the script via the yaml file to be executed on every container start, when the script ends the container will be restarted. 
 ## Just putting this sleep here to prevent it. Going the simple/lazy route. 
-## Also, I could add a loop to check for updates in here, but I'd rather show you how to create cronjobs in AKS which is more fun ;] . 
+## Also, I could add a loop to check for updates in here, but I'd rather show you how to create cronjobs in AKS which is more fun ;] after all we're here to learn . 
 sleep 100000000
