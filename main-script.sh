@@ -14,8 +14,9 @@ mkdir /home/Minecraft/MinecraftServer_Backup 2>/dev/null
 touch /home/Minecraft/Last_Mine-version 2>/dev/null 
 
 echo "$(date) - Installing wget and unzip packages"
-apt update
-apt-get install wget unzip -y
+export DEBIAN_FRONTEND=noninteractive
+apt-get -y update >/dev/null
+apt-get install -y --no-install-recommends --no-install-suggests --fix-missing bash-static wget unzip curl >/dev/null
 
 echo "$(date) - Preparing and exporting the URL for the Minecraft Bedrock Server files."
 URL=$(curl -k "https://www.minecraft.net/en-us/download/server/bedrock" -H "Accept-Encoding: gzip,deflate,sdch" -H "Accept-Language: en-US,en;q=0.8" -H "User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1985.143 Safari/537.36" -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8" -H "Referer: http://google.com"-H "Connection: keep-alive" -H "Cache-Control: max-age=0" --compressed >/home/Minecraft/tmp/bedrock 2>/dev/null; echo $(cat /home/Minecraft/tmp/bedrock | grep bin-linux | awk '{print $2}' |sed 's/href=//' | tr -d '"' ))
@@ -30,25 +31,24 @@ cp -v /home/Minecraft/MinecraftServer_Bedrock/whitelist.json /home/Minecraft/Min
 cp -v /home/Minecraft/MinecraftServer_Bedrock/permissions.json /home/Minecraft/MinecraftServer_Backup 2>/dev/null
 echo "$(date) - Backing up existing worlds if they exist." 
 cp -vr /home/Minecraft/MinecraftServer_Bedrock/worlds/ /home/Minecraft/MinecraftServer_Backup/worlds/ 2>/dev/null
-echo "$(date) - Back up complete, files saved under /home/Minecraft/MinecraftServer_Backup ."
 
 echo "$(date) - Comparing the latest and currently installed Minecraft versions."
 if echo $URL | grep -q $(cat /home/Minecraft/Last_Mine-version)  2>/dev/null ; then
-	 echo "$(date) - Current Minecraft version is $(cat /home/Minecraft/Last_Mine-version | awk -F'/' '{print $5}' )"
-	 echo "$(date) - Already on latest version, starting the Minecraft server! Note this will take a few minutes." 
+   echo "$(date) - Current Minecraft version is $(cat /home/Minecraft/Last_Mine-version | awk -F'/' '{print $5}' )"
+   echo "$(date) - Already on latest version, starting the Minecraft server! Note this will take a few minutes." 
    cd /home/Minecraft/MinecraftServer_Bedrock/ && LD_LIBRARY_PATH=. ./bedrock_server 
    echo "$(date) - Yay! All set, have fun." 
    exit 1
 else
    echo "$(date) - A fresh or outdated Minecraft version has been detected."
-	 echo "$(date) - Updating Minecraft to the latest version."
-	 echo "$(date) - Downloading latest Bedrock version $( echo $URL | awk -F'/' '{print $5}') "
-   wget --quiet $URL -P /home/Minecraft/MinecraftServer_Bedrock >/dev/null
+   echo "$(date) - Updating Minecraft to the latest version."
+   echo "$(date) - Downloading latest Bedrock version $( echo $URL | awk -F'/' '{print $5}') "
+   wget --quiet $URL -P /home/Minecraft/MinecraftServer_Bedrock --no-check-certificate 2>/dev/null
    echo "$(date) - Download finished, extracting files now. It will take time to complete."
    echo "$(date) - Verbosity has been turned off so don't freak out, things are running, go get a coffee!"
    unzip -o /home/Minecraft/MinecraftServer_Bedrock/bedrock-server*.zip -d /home/Minecraft/MinecraftServer_Bedrock/ >/dev/null
-	 ### Sometimes the bedrock_server file doesn't get extracted from the zip for some reason so this is a second attempt just in case.
-	 unzip -p /home/Minecraft/MinecraftServer_Bedrock/bedrock-server*.zip bedrock_server > /home/Minecraft/MinecraftServer_Bedrock/bedrock_server 
+   ### Sometimes the bedrock_server file doesn't get extracted from the zip for some reason so this is a second attempt just in case.
+   unzip -p /home/Minecraft/MinecraftServer_Bedrock/bedrock-server*.zip bedrock_server > /home/Minecraft/MinecraftServer_Bedrock/bedrock_server 
    echo "$(date) - Update complete." 
    echo "$(date) - Restoring server.properties, whitelist.json, and permissions.json."
    cp -v /home/Minecraft/MinecraftServer_Backup/server.properties /home/Minecraft/MinecraftServer_Bedrock 2>/dev/null
