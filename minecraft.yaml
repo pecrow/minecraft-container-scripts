@@ -58,6 +58,7 @@ spec:
       labels:
         app: minecraft-server
     spec:
+      restartPolicy: Always
       containers:
       - name: minecraft-server
         image: docker.io/library/ubuntu:20.04
