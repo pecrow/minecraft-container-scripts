@@ -84,10 +84,10 @@ spec:
   ports:
   - port: 19132
     protocol: UDP
-    name: tcp-19132
+    name: udp-19132
   - port: 19133
     protocol: UDP
-    name: tcp-19133
+    name: dup-19133
   selector:
     app: minecraft-server
   loadBalancerIP: 000.000.000.000
