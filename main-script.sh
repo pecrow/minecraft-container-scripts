@@ -14,7 +14,7 @@ mkdir /home/Minecraft/MinecraftServer_Backup 2>/dev/null
 ## This file is used to check if version should be updated. 
 touch /home/Minecraft/Last_Mine-version 2>/dev/null 
 
-echo "$(date) - Installing wget and unzip packages"
+echo "$(date) - Installing wget, curl, bash-static, and unzip packages"
 export DEBIAN_FRONTEND=noninteractive >/dev/null
 apt-get -y update >/dev/null
 apt-get install -y --no-install-recommends --no-install-suggests --fix-missing bash-static wget unzip curl >/dev/null
